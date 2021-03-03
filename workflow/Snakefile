@@ -1,0 +1,22 @@
+import pandas as pd
+import re
+
+# The main entry point of your workflow.
+# After configuring, running snakemake -n in a clone of this repository should successfully execute a dry-run of the workflow.
+configfile: "config/config.yaml"
+report: "report/workflow.rst"
+
+DONORS = set(pd.read_table(config["metadata"]).Donor)
+
+rule all:
+    input:
+        "results/annot.fa",
+        "results/sequences.newick",
+        "results/hypermut.tsv",
+
+include: "rules/functional_filter.smk"
+include: "rules/mafft_align.smk"
+include: "rules/fasttree.smk"
+include: "rules/split.smk"
+include: "rules/donor_align.smk"
+include: "rules/hypermut.smk"
